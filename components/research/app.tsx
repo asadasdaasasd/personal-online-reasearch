@@ -52,7 +52,7 @@ import {
   statuses,
   kinds,
 } from "@/lib/domain";
-import { Editor, api, toInput } from "./editor";
+import { Editor, api, toInput, setApiOwner } from "./editor";
 import {
   PanelTitle,
   Empty,
@@ -65,6 +65,8 @@ import {
 import { Timer } from "./timer";
 import { Stats } from "./stats";
 import { DataManagement } from "./data-management";
+import { QuickEntry } from "./quick-entry";
+import { EmailSignOut } from "./auth-form";
 type View =
   | "dashboard"
   | "goals"
@@ -96,9 +98,13 @@ type Selection = { kind: Kind; record?: ResearchRecord; date?: string };
 export default function ResearchApp({
   name,
   email,
+  authMode = "sites",
+  userId,
 }: {
   name: string;
   email: string;
+  authMode?: "sites" | "email";
+  userId: string;
 }) {
   const [store, setStore] = useState<Store>(emptyStore),
     [view, setView] = useState<View>("dashboard"),
@@ -132,6 +138,7 @@ export default function ResearchApp({
     }
   }, []);
   useEffect(() => {
+    setApiOwner(userId);
     void load().catch(() => {});
     const isDark = localStorage.getItem("research-os-theme") === "dark";
     setDark(isDark);
@@ -1119,14 +1126,26 @@ export default function ResearchApp({
                       <ShieldCheck size={16} /> 私人工作空间 ·
                       服务端身份与所有权验证
                     </p>
-                    <a
-                      className="button"
-                      href="/signout-with-chatgpt?return_to=/"
-                      target="_top"
-                    >
-                      <LogOut size={16} />
-                      退出登录
-                    </a>
+                    {authMode === "email" ? (
+                      <>
+                        <a className="button" href="/account/password">
+                          修改密码
+                        </a>
+                        <EmailSignOut />
+                      </>
+                    ) : (
+                      <a
+                        className="button"
+                        href="/signout-with-chatgpt?return_to=/"
+                        target="_top"
+                      >
+                        <LogOut size={16} />
+                        退出登录
+                      </a>
+                    )}
+                  </section>
+                  <section className="panel settings-card">
+                    <QuickEntry />
                   </section>
                   <section className="panel settings-card">
                     <h3>关于 Research OS</h3>
@@ -1154,6 +1173,7 @@ export default function ResearchApp({
       </div>
       {selection && (
         <Editor
+          ownerId={userId}
           key={`${selection.kind}-${selection.record?.id || "new"}-${selection.date || ""}`}
           kind={selection.kind}
           record={selection.record}

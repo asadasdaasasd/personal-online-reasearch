@@ -2,6 +2,8 @@
 
 连接科研目标、每日记录、实验与阶段成果的私人全栈应用。默认浅色，支持深色和移动端。线上数据由 D1 和 R2 持久化，核心记录不保存在 localStorage。
 
+支持独立的邮箱密码登录部署（Supabase Auth + 自有 Cloudflare Worker），包括验证邮件与密码恢复。代码与本地契约测试已完成；真实服务连接与独立上线尚待配置。入口、迁移和上线步骤见 [邮箱登录说明](docs/EMAIL_LOGIN.md)。原 Sites 地址继续使用原有认证。
+
 ## 功能
 
 - 科研总览：真实时长、任务和阶段进度、今日任务、最近活动、活跃度热力图。
@@ -33,7 +35,7 @@ React 19、TypeScript、Vinext App Router、Cloudflare Workers、D1、Drizzle �
 
 需要 Node.js >=22.13。首次执行 npm ci、npm run build，再依次应用 drizzle/ 下的 SQL 到本地 D1；完整 PowerShell 命令见运维文档。之后运行 npm run dev。
 
-本地测试登录仅用于回环开发服务器；生产身份由 Sites 网关提供。不要将原始 Worker 在没有可信身份网关时直接公开。
+默认 Sites 模式的本地测试登录仅用于回环开发服务器；生产身份由 Sites 网关提供。独立模式必须使用 `npm run deploy:email`，设置 `AUTH_MODE=email` 并配置 Supabase。不要将默认 Sites 模式的原始 Worker 在没有可信身份网关时直接公开。
 
 ## 验证
 

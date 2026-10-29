@@ -1,5 +1,7 @@
 # Research OS 运维、备份与部署
 
+如需不依赖 ChatGPT 的邮箱密码登录，使用 [邮箱独立部署指南](EMAIL_LOGIN.md)。下文默认描述原 Sites 部署；两种模式不要混用构建产物。
+
 ## 架构与数据位置
 
 React 19 + TypeScript + Vinext（App Router 接口）运行于 Cloudflare Workers。Sites 负责 HTTPS、私人访问策略及 ChatGPT 登录。D1 是权威关系数据库，R2 保存私有图片与研究附件。发布只更新代码并追加迁移，不清空数据库或文件。

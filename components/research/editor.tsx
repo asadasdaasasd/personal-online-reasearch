@@ -21,16 +21,21 @@ import {
 } from "@/lib/domain";
 import { fields } from "@/lib/forms";
 import { MarkdownEditor, Markdown } from "./markdown";
+let expectedOwner = "";
+export function setApiOwner(id: string) {
+  expectedOwner = id;
+}
 export async function api<T = unknown>(
   url: string,
   options?: RequestInit,
 ): Promise<T> {
+  const requestHeaders = new Headers(options?.headers);
+  if (expectedOwner) requestHeaders.set("X-Research-Owner", expectedOwner);
+  if (!(options?.body instanceof FormData))
+    requestHeaders.set("Content-Type", "application/json");
   const r = await fetch(url, {
     ...options,
-    headers:
-      options?.body instanceof FormData
-        ? options.headers
-        : { "Content-Type": "application/json", ...options?.headers },
+    headers: requestHeaders,
   });
   const d = (await r.json()) as Record<string, unknown>;
   if (!r.ok) throw new Error(String(d.error || "请求失败"));
@@ -51,6 +56,7 @@ export function toInput(r: ResearchRecord) {
 }
 type FileInfo = { id: string; name: string; mime: string; size: number };
 export function Editor({
+  ownerId,
   kind,
   record,
   store,
@@ -59,6 +65,7 @@ export function Editor({
   onSaved,
   onNavigate,
 }: {
+  ownerId: string;
   kind: Kind;
   record?: ResearchRecord;
   store: Store;
@@ -109,7 +116,7 @@ export function Editor({
     idRef = useRef(id);
   valueRef.current = value;
   idRef.current = id;
-  const draftKey = `research-os-draft:${kind}:${record?.id || "new"}`;
+  const draftKey = `research-os-draft:${ownerId}:${kind}:${record?.id || initialDate || "new"}`;
   useEffect(() => {
     setRestorable(!!localStorage.getItem(draftKey));
     if (record)

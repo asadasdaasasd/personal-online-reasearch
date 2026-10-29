@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { getChatGPTUser } from "@/app/chatgpt-auth";
+import { getResearchUser } from "./auth";
 import { kinds, recordInput, type Kind, type ResearchRecord } from "./domain";
 export class HttpError extends Error {
   constructor(
@@ -23,8 +23,13 @@ export async function identity(request?: Request) {
     if (origin && origin !== new URL(request.url).origin)
       throw new HttpError(403, "请求来源不被允许");
   }
-  const u = await getChatGPTUser();
+  const u = await getResearchUser();
   if (!u) throw new HttpError(401, "请先登录");
+  if (
+    request?.headers.get("X-Research-Owner") &&
+    request.headers.get("X-Research-Owner") !== u.userId
+  )
+    throw new HttpError(409, "登录账户已发生变化，请刷新页面后继续。");
   return u;
 }
 export async function ensureUser(id: string) {

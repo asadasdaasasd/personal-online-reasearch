@@ -38,6 +38,10 @@ const localBindingConfig = {
 };
 
 export default defineConfig(async ({ command }) => {
+  if (process.env.RESEARCH_DEPLOYMENT === "email") {
+    const { emailViteConfig } = await import("./vite.email");
+    return emailViteConfig();
+  }
   configureToolEnvironment(process.cwd());
 
   // Wrangler snapshots its log path while the Cloudflare plugin is imported.

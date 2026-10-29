@@ -39,6 +39,7 @@ yarn-error.log*
 /.agents/
 /.codex/
 /outputs/
+/wrangler.email.local.json
 /work/
 
 # OS metadata

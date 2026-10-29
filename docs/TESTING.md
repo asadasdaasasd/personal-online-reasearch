@@ -1,5 +1,12 @@
 # 验证记录
 
+## 邮箱独立登录
+
+- 新增 `npm run build:email` 与 `npm run test:email`，后者对本地生产构建 Worker 使用真实 Supabase SDK 和本机 HTTP 契约服务，覆盖匿名与伪造平台身份拒绝、跨源拒绝、密码长度与邮箱允许列表、注册验证、一次性链接及站外跳转防护、HttpOnly cookie、会话自动续期、真实 D1 双邮箱数据隔离、密码重置及退出。
+- 本机草稿按账户分区，API 写入可检测旧标签页的账户变更。
+- **尚未验证：**真实 Supabase 项目、SMTP 邮件送达、真实邮件跨设备打开、独立 Cloudflare HTTPS 生产发布。契约服务验证结果不代表这些外部服务已可用。
+- 默认 Sites 与邮箱独立构建分开，现有站点私人访问策略保持原状。迁移和操作步骤见 [EMAIL_LOGIN.md](EMAIL_LOGIN.md)。
+
 ## 已验证
 
 - TypeScript 严格类型检查通过。

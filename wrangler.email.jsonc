@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "research-os-email",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "vars": {
+    "AUTH_MODE": "email",
+    "APP_ORIGIN": "http://127.0.0.1:5175",
+    "SUPABASE_URL": "",
+    "SUPABASE_PUBLISHABLE_KEY": "",
+    "AUTH_ALLOWED_EMAILS": "",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "research-os-email",
+      "migrations_dir": "drizzle",
+    },
+  ],
+  "r2_buckets": [{ "binding": "BUCKET" }],
+}
